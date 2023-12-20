@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Confluence Export Viewer</title>
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style>
+        body {
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        div.wrapper {
+            display: flex;
+            height: 100%;
+        }
+
+        aside#navbar {
+            flex: 0;
+            min-width: 300px;
+            overflow-y: auto;
+            padding-top: 30pt;
+        }
+
+        div#splitter {
+            flex: 0;
+            min-width: 10px;
+            background-color: aliceblue;
+            cursor: w-resize;
+        }
+
+        iframe#main {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .navHidden {
+            display: none;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+        integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+    <script>
+        function onLoad() {
+            // target all links to frame
+            $('aside#navbar a').attr('target', 'main')
+            // collapse everything, enable expanding on click
+            $('aside#navbar ul li ul').addClass('navHidden')
+            $('aside#navbar a').click(function (event) { displayNavPath($(this)) })
+            // enable splitter dragging 
+            var splitterSelected = false
+            var splitterX = undefined
+            $('#splitter').mousedown(function (event) {
+                splitterSelected = true
+                splitterX = event.clientX
+            })
+            $('body').mousemove(function (event) {
+                if (splitterSelected) {
+                    $('#navbar').css('min-width', event.clientX - 10)
+                }
+                event.preventDefault()
+            })
+            $('body').mouseup(function () {
+                splitterSelected = false
+            })
+        }
+        function displayNavPath(elem) {
+            // collapse everything
+            $('aside#navbar ul li ul').addClass('navHidden')
+            // 'un-hide' all <ul> on path to root
+            while (elem.attr('id') != 'navbar') {
+                elem.removeClass('navHidden')
+                elem.siblings().removeClass('navHidden')
+                elem = elem.parent()
+            }
+        }
+    </script>
+</head>
+
+<body onload="onLoad()">
+    <div class="wrapper">
+        <aside id="navbar">
+            <!-- Demo stuff. Replace everything inside here with contents from confluence export -->
+            <a href="main-page.html">Page 1</a>
+            <ul>
+                <li>
+                    <a href="page.html">Page 11</a>
+                    <ul>
+                        <li> <a href="page.html">Page 111 </a> </li>
+                    </ul>
+                    <ul>
+                        <li> <a href="page.html"> Page 112 </a> </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="page.html">Page 12</a>
+                    <ul>
+                        <li> <a href="page.html">Page 121 </a> </li>
+                    </ul>
+                    <ul>
+                        <li> <a href="page.html"> Page 122 </a> </li>
+                    </ul>
+                </li>
+            </ul>
+        </aside>
+        <div id="splitter">&nbsp;</div>
+        <iframe id="main" name="main" src="main-page.html" title="main"></iframe>
+    </div>
+</body>
+
+</html>
